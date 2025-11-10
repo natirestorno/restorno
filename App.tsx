@@ -8,8 +8,11 @@ import CommunitySection from './components/CommunitySection';
 import QuoteForm from './components/QuoteForm';
 import Login from './components/Login';
 import SignUp from './components/SignUp';
+import CommunityPage from './components/CommunityPage';
+import KnowledgePage from './components/KnowledgePage';
+import MarketplacePage from './components/MarketplacePage';
 
-export type View = 'home' | 'quote' | 'login' | 'signup';
+export type View = 'home' | 'quote' | 'login' | 'signup' | 'community' | 'knowledge' | 'marketplace' | 'services';
 
 function App() {
   const [currentView, setCurrentView] = useState<View>('home');
@@ -26,6 +29,16 @@ function App() {
   const navigateTo = (view: View) => {
     setCurrentView(view);
     window.scrollTo(0, 0);
+    
+    if (view === 'services') {
+      setCurrentView('home');
+      setTimeout(() => {
+        const servicesSection = document.getElementById('services-section');
+        if (servicesSection) {
+          servicesSection.scrollIntoView({ behavior: 'smooth' });
+        }
+      }, 100);
+    }
   };
 
   const handleLogin = () => {
@@ -58,6 +71,12 @@ function App() {
         return <Login onLogin={handleLogin} onNavigate={navigateTo} />;
       case 'signup':
         return <SignUp onSignUp={handleLogin} onNavigate={navigateTo} />; // onSignUp also logs in
+      case 'community':
+        return <CommunityPage />;
+      case 'knowledge':
+        return <KnowledgePage />;
+      case 'marketplace':
+        return <MarketplacePage />;
       default:
         return <HeroSection onGetQuoteClick={() => navigateTo('quote')} />;
     }

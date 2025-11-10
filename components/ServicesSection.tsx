@@ -1,4 +1,3 @@
-
 import React from 'react';
 
 interface ServiceCardProps {
@@ -17,7 +16,7 @@ const ServiceCard: React.FC<ServiceCardProps> = ({ icon, title, description }) =
 
 const ServicesSection: React.FC = () => {
     return (
-        <section className="py-20 bg-gradient-to-br from-[#F5F5DC] to-[#faf8f0]">
+        <section id="services-section" className="py-20 bg-gradient-to-br from-[#F5F5DC] to-[#faf8f0]">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <h2 className="text-4xl font-bold text-center text-[#8B4513] mb-12">השירותים שלנו</h2>
                 <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">

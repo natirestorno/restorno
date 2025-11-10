@@ -50,10 +50,10 @@ const Header: React.FC<HeaderProps> = ({ onNavigate, isAuthenticated, onLogout }
                     <div className="hidden md:block">
                         <ul className="ms-10 flex items-baseline space-x-4">
                             <NavLink onClick={() => onNavigate('home')}>בית</NavLink>
-                            <NavLink>שירותים</NavLink>
-                            <NavLink>קהילה</NavLink>
-                            <NavLink>מרקטפלייס</NavLink>
-                            <NavLink>ידע</NavLink>
+                            <NavLink onClick={() => onNavigate('services')}>שירותים</NavLink>
+                            <NavLink onClick={() => onNavigate('community')}>קהילה</NavLink>
+                            <NavLink onClick={() => onNavigate('marketplace')}>מרקטפלייס</NavLink>
+                            <NavLink onClick={() => onNavigate('knowledge')}>ידע</NavLink>
                         </ul>
                     </div>
                     <div className="hidden md:flex items-center gap-4">
@@ -79,10 +79,10 @@ const Header: React.FC<HeaderProps> = ({ onNavigate, isAuthenticated, onLogout }
                 <div className="md:hidden">
                     <ul className="px-2 pt-2 pb-3 space-y-1 sm:px-3 text-center">
                        <NavLink onClick={() => handleNavigate('home')}>בית</NavLink>
-                        <NavLink>שירותים</NavLink>
-                        <NavLink>קהילה</NavLink>
-                        <NavLink>מרקטפלייס</NavLink>
-                        <NavLink>ידע</NavLink>
+                        <NavLink onClick={() => handleNavigate('services')}>שירותים</NavLink>
+                        <NavLink onClick={() => handleNavigate('community')}>קהילה</NavLink>
+                        <NavLink onClick={() => handleNavigate('marketplace')}>מרקטפלייס</NavLink>
+                        <NavLink onClick={() => handleNavigate('knowledge')}>ידע</NavLink>
                          <div className="border-t border-white/20 my-2"></div>
                          {isAuthenticated ? (
                             <NavLink onClick={handleLogout}>התנתק</NavLink>
