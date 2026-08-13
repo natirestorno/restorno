@@ -3,9 +3,10 @@ import React, { useState, useEffect } from 'react';
 
 interface HeroSectionProps {
     onGetQuoteClick: () => void;
+    onCommunityClick: () => void;
 }
 
-const HeroSection: React.FC<HeroSectionProps> = ({ onGetQuoteClick }) => {
+const HeroSection: React.FC<HeroSectionProps> = ({ onGetQuoteClick, onCommunityClick }) => {
     const [offsetY, setOffsetY] = useState(0);
     const [isLoaded, setIsLoaded] = useState(false);
 
@@ -59,7 +60,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({ onGetQuoteClick }) => {
                     >
                         🛠️ קבל הצעת מחיר מבוססת AI
                     </button>
-                    <button className="bg-transparent border-2 border-[#8B4513] text-[#8B4513] font-bold py-4 px-8 rounded-full hover:bg-[#8B4513] hover:text-white transition-all duration-300 transform hover:-translate-y-1 text-lg">
+                    <button onClick={onCommunityClick} className="bg-transparent border-2 border-[#8B4513] text-[#8B4513] font-bold py-4 px-8 rounded-full hover:bg-[#8B4513] hover:text-white transition-all duration-300 transform hover:-translate-y-1 text-lg">
                         👥 הצטרף לקהילה
                     </button>
                 </div>

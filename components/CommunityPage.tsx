@@ -1,6 +1,6 @@
 import React from 'react';
 
-const CommunityPage: React.FC = () => {
+const CommunityPage: React.FC<{ onJoin: () => void }> = ({ onJoin }) => {
     return (
         <div className="bg-white">
             <header className="bg-gradient-to-r from-[#faf8f0] to-[#F5F5DC] py-16 text-center">
@@ -14,13 +14,13 @@ const CommunityPage: React.FC = () => {
                     <h2 className="text-3xl font-bold text-center text-[#8B4513] mb-10">דיונים אחרונים בפורום</h2>
                     <div className="space-y-4 max-w-3xl mx-auto">
                         {['זיהוי עץ אלון בכיסא ישן', 'השיטה הטובה ביותר להסרת צבע ישן', 'שאלה לגבי ריפוד קטיפה', 'איפה מוצאים חלקים מקוריים?'].map(thread => (
-                            <a href="#" key={thread} className="block bg-gray-50 p-4 rounded-lg shadow-sm hover:shadow-md transition-shadow">
+                            <button type="button" onClick={onJoin} key={thread} className="block bg-gray-50 p-4 rounded-lg shadow-sm hover:shadow-md transition-shadow">
                                 <h3 className="font-semibold text-lg text-[#36454F]">{thread}</h3>
                                 <p className="text-sm text-gray-500">נכתב על ידי: אמן העץ • 3 תגובות</p>
-                            </a>
+                            </button>
                         ))}
                          <div className="text-center pt-4">
-                            <button className="bg-transparent border-2 border-[#8B4513] text-[#8B4513] font-bold py-2 px-6 rounded-full hover:bg-[#8B4513] hover:text-white transition-all duration-300">
+                            <button onClick={onJoin} className="bg-transparent border-2 border-[#8B4513] text-[#8B4513] font-bold py-2 px-6 rounded-full hover:bg-[#8B4513] hover:text-white transition-all duration-300">
                                 עבור לפורום
                             </button>
                         </div>

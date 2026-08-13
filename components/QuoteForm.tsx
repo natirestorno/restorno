@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { generateQuote } from '../services/geminiService';
 import type { AIQuoteResponse } from '../types';
 import Spinner from './Spinner';
@@ -23,9 +23,13 @@ const QuoteForm: React.FC = () => {
     const [error, setError] = useState<string | null>(null);
     const [result, setResult] = useState<AIQuoteResponse | null>(null);
 
+    useEffect(() => () => { if (preview) URL.revokeObjectURL(preview); }, [preview]);
+
     const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         if (e.target.files && e.target.files[0]) {
             const file = e.target.files[0];
+            if (!file.type.startsWith('image/')) { setError('יש לבחור קובץ תמונה בלבד.'); return; }
+            if (file.size > 10 * 1024 * 1024) { setError('גודל התמונה המרבי הוא 10MB.'); e.target.value = ''; return; }
             setImage(file);
             setPreview(URL.createObjectURL(file));
             setResult(null);
@@ -114,7 +118,7 @@ const QuoteForm: React.FC = () => {
                         </div>
 
                         <div className="mt-10">
-                            <button type="submit" disabled={loading} className="block w-full rounded-md bg-gradient-to-r from-[#B8860B] to-[#DAA520] px-3.5 py-2.5 text-center text-sm font-semibold text-white shadow-sm hover:from-[#DAA520] hover:to-[#B8860B] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#B8860B] disabled:opacity-50 disabled:cursor-not-allowed">
+                            <button type="submit" disabled={loading || !image} className="block w-full rounded-md bg-gradient-to-r from-[#B8860B] to-[#DAA520] px-3.5 py-2.5 text-center text-sm font-semibold text-white shadow-sm hover:from-[#DAA520] hover:to-[#B8860B] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#B8860B] disabled:opacity-50 disabled:cursor-not-allowed">
                                 {loading ? 'מעבד...' : 'הפק הצעת מחיר'}
                             </button>
                         </div>
@@ -126,7 +130,7 @@ const QuoteForm: React.FC = () => {
                             <p className="mt-4 text-gray-600 animate-pulse">המערכת מנתחת את התמונה... זה עשוי לקחת רגע.</p>
                         </div>
                     )}
-                    {error && <div className="mt-8 text-center text-red-600 bg-red-100 p-4 rounded-md">{error}</div>}
+                    {error && <div role="alert" className="mt-8 text-center text-red-600 bg-red-100 p-4 rounded-md">{error}</div>}
                     {result && <QuoteResult data={result} />}
                 </div>
             </div>

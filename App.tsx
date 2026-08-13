@@ -15,30 +15,32 @@ import MarketplacePage from './components/MarketplacePage';
 export type View = 'home' | 'quote' | 'login' | 'signup' | 'community' | 'knowledge' | 'marketplace' | 'services';
 
 function App() {
-  const [currentView, setCurrentView] = useState<View>('home');
+  const getViewFromHash = (): View => {
+    const candidate = window.location.hash.replace('#/', '') as View;
+    return ['home', 'quote', 'login', 'signup', 'community', 'knowledge', 'marketplace', 'services'].includes(candidate) ? candidate : 'home';
+  };
+  const [currentView, setCurrentView] = useState<View>(getViewFromHash);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   useEffect(() => {
     // Check for auth token in localStorage on initial load
     const token = localStorage.getItem('userToken');
-    if (token) {
-      setIsAuthenticated(true);
-    }
+    if (token) setIsAuthenticated(true);
+    const handleHashChange = () => setCurrentView(getViewFromHash());
+    window.addEventListener('hashchange', handleHashChange);
+    return () => window.removeEventListener('hashchange', handleHashChange);
   }, []);
 
   const navigateTo = (view: View) => {
-    setCurrentView(view);
-    window.scrollTo(0, 0);
-    
     if (view === 'services') {
+      window.location.hash = '/home';
       setCurrentView('home');
-      setTimeout(() => {
-        const servicesSection = document.getElementById('services-section');
-        if (servicesSection) {
-          servicesSection.scrollIntoView({ behavior: 'smooth' });
-        }
-      }, 100);
+      setTimeout(() => document.getElementById('services-section')?.scrollIntoView({ behavior: 'smooth' }), 100);
+      return;
     }
+    window.location.hash = `/${view}`;
+    setCurrentView(view);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const handleLogin = () => {
@@ -59,10 +61,10 @@ function App() {
       case 'home':
         return (
           <>
-            <HeroSection onGetQuoteClick={() => navigateTo('quote')} />
+            <HeroSection onGetQuoteClick={() => navigateTo('quote')} onCommunityClick={() => navigateTo('community')} />
             <GallerySection />
             <ServicesSection />
-            <CommunitySection />
+            <CommunitySection onJoin={() => navigateTo(isAuthenticated ? 'community' : 'signup')} />
           </>
         );
       case 'quote':
@@ -72,13 +74,13 @@ function App() {
       case 'signup':
         return <SignUp onSignUp={handleLogin} onNavigate={navigateTo} />; // onSignUp also logs in
       case 'community':
-        return <CommunityPage />;
+        return <CommunityPage onJoin={() => navigateTo(isAuthenticated ? 'community' : 'signup')} />;
       case 'knowledge':
         return <KnowledgePage />;
       case 'marketplace':
         return <MarketplacePage />;
       default:
-        return <HeroSection onGetQuoteClick={() => navigateTo('quote')} />;
+        return <HeroSection onGetQuoteClick={() => navigateTo('quote')} onCommunityClick={() => navigateTo('community')} />;
     }
   }
 
@@ -92,7 +94,7 @@ function App() {
       <main>
         {renderContent()}
       </main>
-      <Footer />
+      <Footer onNavigate={navigateTo} />
     </div>
   );
 }
