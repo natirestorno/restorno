@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 // --- Sub-components specific to MarketplacePage ---
 
 // Card for Auction Items
-const AuctionCard: React.FC<{ item: any }> = ({ item }) => (
+const AuctionCard: React.FC<{ item: any; onBid: (title: string) => void }> = ({ item, onBid }) => (
     <div className="flex-shrink-0 w-80 bg-white rounded-xl shadow-lg overflow-hidden group border-2 border-transparent hover:border-[#B8860B] transition-all duration-300 transform hover:-translate-y-1">
         <div className="relative h-56">
             <img src={item.image} alt={item.title} className="w-full h-full object-cover"/>
@@ -22,7 +22,7 @@ const AuctionCard: React.FC<{ item: any }> = ({ item }) => (
             <div className="mt-3 text-center bg-yellow-100 text-[#B8860B] font-bold py-1 rounded-full text-sm">
                 ⏳ נותרו {item.timeLeft}
             </div>
-            <button className="mt-4 w-full bg-gradient-to-r from-[#B8860B] to-[#DAA520] text-white font-bold py-2.5 px-4 rounded-full transition-all duration-300 transform opacity-0 group-hover:opacity-100 group-hover:translate-y-0 -translate-y-2">
+            <button onClick={() => onBid(item.title)} className="mt-4 w-full bg-gradient-to-r from-[#B8860B] to-[#DAA520] text-white font-bold py-2.5 px-4 rounded-full transition-all duration-300 transform opacity-0 group-hover:opacity-100 group-hover:translate-y-0 -translate-y-2">
                 הגש הצעה
             </button>
         </div>
@@ -30,7 +30,7 @@ const AuctionCard: React.FC<{ item: any }> = ({ item }) => (
 );
 
 // Card for Direct Sale Items
-const ProductCard: React.FC<{ item: any }> = ({ item }) => (
+const ProductCard: React.FC<{ item: any; onAdd: (title: string) => void }> = ({ item, onAdd }) => (
     <div className="group bg-white rounded-xl shadow-md overflow-hidden hover:shadow-xl transition-shadow duration-300">
         <div className="relative h-56">
             <img src={item.image} alt={item.title} className="w-full h-full object-cover"/>
@@ -40,7 +40,7 @@ const ProductCard: React.FC<{ item: any }> = ({ item }) => (
             <h3 className="font-bold text-lg text-[#8B4513] truncate">{item.title}</h3>
             <p className="text-sm text-gray-500">נמכר על ידי {item.seller}</p>
             <p className="text-xl font-semibold text-green-700 mt-2">₪{item.price.toLocaleString()}</p>
-            <button className="mt-4 w-full bg-[#8B4513] text-white font-bold py-2 px-4 rounded-full opacity-0 group-hover:opacity-100 transform translate-y-2 group-hover:translate-y-0 transition-all duration-300">
+            <button onClick={() => onAdd(item.title)} className="mt-4 w-full bg-[#8B4513] text-white font-bold py-2 px-4 rounded-full opacity-0 group-hover:opacity-100 transform translate-y-2 group-hover:translate-y-0 transition-all duration-300">
                 הוסף לסל
             </button>
         </div>
@@ -75,9 +75,15 @@ const categories = [
 // --- Main Marketplace Component ---
 
 const MarketplacePage: React.FC = () => {
+    const [query, setQuery] = useState('');
+    const [notice, setNotice] = useState('');
+    const [page, setPage] = useState(1);
+    const showNotice = (message: string) => { setNotice(message); window.setTimeout(() => setNotice(''), 3500); };
+    const filteredItems = directSaleItems.filter(item => `${item.title} ${item.seller} ${item.condition}`.includes(query.trim()));
     return (
         <div className="bg-gradient-to-br from-[#F5F5DC] to-[#faf8f0]">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+                {notice && <div role="status" className="fixed z-50 top-24 left-1/2 -translate-x-1/2 bg-[#36454F] text-white px-6 py-3 rounded-full shadow-xl">{notice}</div>}
                 {/* Header */}
                 <header className="text-center mb-16">
                     <h1 className="text-5xl md:text-6xl font-black text-[#8B4513]">מרקטפלייס</h1>
@@ -85,10 +91,13 @@ const MarketplacePage: React.FC = () => {
                     <div className="mt-8 flex justify-center gap-4">
                          <input 
                             type="search"
+                            aria-label="חיפוש במרקטפלייס"
+                            value={query}
+                            onChange={(e) => { setQuery(e.target.value); setPage(1); }}
                             placeholder="חפש פריט, סגנון או תקופה..."
                             className="w-full max-w-lg p-3 rounded-full border border-gray-300 shadow-sm focus:ring-2 focus:ring-[#B8860B] focus:border-[#B8860B]"
                         />
-                        <button className="bg-gradient-to-r from-[#B8860B] to-[#DAA520] text-white font-bold py-3 px-6 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
+                        <button onClick={() => showNotice('טופס מכירת פריט ייפתח בקרוב. נשמח לסייע דרך פרטי הקשר בתחתית העמוד.')} className="bg-gradient-to-r from-[#B8860B] to-[#DAA520] text-white font-bold py-3 px-6 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
                             מכור פריט
                         </button>
                     </div>
@@ -98,7 +107,7 @@ const MarketplacePage: React.FC = () => {
                 <section className="mb-20">
                     <h2 className="text-3xl font-bold text-right text-[#8B4513] mb-6">מכירות פומביות לוהטות 🔥</h2>
                     <div className="flex gap-8 pb-4 -mx-4 px-4 overflow-x-auto">
-                        {auctionItems.map((item, index) => <AuctionCard key={index} item={item} />)}
+                        {auctionItems.map((item, index) => <AuctionCard key={index} item={item} onBid={(title) => showNotice(`ההצעה עבור “${title}” נקלטה לבדיקה`)} />)}
                     </div>
                 </section>
 
@@ -107,7 +116,7 @@ const MarketplacePage: React.FC = () => {
                     <h2 className="text-3xl font-bold text-center text-[#8B4513] mb-8">קניות לפי קטגוריה</h2>
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-6 max-w-4xl mx-auto">
                         {categories.map(cat => (
-                            <button key={cat.name} className="bg-white p-6 rounded-xl shadow-md hover:shadow-lg hover:-translate-y-1 transition-all duration-300 text-center">
+                            <button key={cat.name} onClick={() => { setQuery(cat.name === 'רהיטים' ? '' : cat.name); document.getElementById('market-items')?.scrollIntoView({ behavior: 'smooth' }); }} className="bg-white p-6 rounded-xl shadow-md hover:shadow-lg hover:-translate-y-1 transition-all duration-300 text-center">
                                 <div className="text-5xl mb-2">{cat.icon}</div>
                                 <h3 className="text-lg font-bold text-[#36454F]">{cat.name}</h3>
                             </button>
@@ -116,20 +125,21 @@ const MarketplacePage: React.FC = () => {
                 </section>
 
                 {/* Direct Sales Section */}
-                <section>
+                <section id="market-items">
                     <h2 className="text-3xl font-bold text-right text-[#8B4513] mb-8">פריטים מהקהילה שלנו</h2>
                     <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-8">
-                        {directSaleItems.map((item, index) => <ProductCard key={index} item={item} />)}
+                        {filteredItems.map((item, index) => <ProductCard key={index} item={item} onAdd={(title) => showNotice(`“${title}” נוסף לסל`)} />)}
                     </div>
+                    {!filteredItems.length && <p className="text-center bg-white p-8 rounded-xl text-gray-600">לא נמצאו פריטים התואמים לחיפוש.</p>}
                 </section>
 
                  {/* Pagination */}
                 <nav className="flex justify-center items-center mt-16 space-x-2" dir="ltr">
-                    <button className="p-2 rounded-md hover:bg-gray-200">«</button>
-                    <button className="px-4 py-2 rounded-md hover:bg-gray-200">1</button>
-                    <button className="px-4 py-2 rounded-md bg-[#B8860B] text-white">2</button>
-                    <button className="px-4 py-2 rounded-md hover:bg-gray-200">3</button>
-                    <button className="p-2 rounded-md hover:bg-gray-200">»</button>
+                    <button aria-label="העמוד הקודם" disabled={page === 1} onClick={() => setPage(p => Math.max(1, p - 1))} className="p-2 rounded-md hover:bg-gray-200 disabled:opacity-40">«</button>
+                    <button aria-current={page === 1 ? 'page' : undefined} onClick={() => setPage(1)} className={`px-4 py-2 rounded-md ${page === 1 ? 'bg-[#B8860B] text-white' : 'hover:bg-gray-200'}`}>1</button>
+                    <button aria-current={page === 2 ? 'page' : undefined} onClick={() => setPage(2)} className={`px-4 py-2 rounded-md ${page === 2 ? 'bg-[#B8860B] text-white' : 'hover:bg-gray-200'}`}>2</button>
+                    <button aria-current={page === 3 ? 'page' : undefined} onClick={() => setPage(3)} className={`px-4 py-2 rounded-md ${page === 3 ? 'bg-[#B8860B] text-white' : 'hover:bg-gray-200'}`}>3</button>
+                    <button aria-label="העמוד הבא" disabled={page === 3} onClick={() => setPage(p => Math.min(3, p + 1))} className="p-2 rounded-md hover:bg-gray-200 disabled:opacity-40">»</button>
                 </nav>
             </div>
         </div>

@@ -2,13 +2,6 @@
 import { GoogleGenAI, Type } from "@google/genai";
 import type { AIQuoteResponse } from "../types";
 
-const API_KEY = process.env.API_KEY;
-if (!API_KEY) {
-  throw new Error("API_KEY environment variable not set");
-}
-
-const ai = new GoogleGenAI({ apiKey: API_KEY });
-
 const responseSchema = {
     type: Type.OBJECT,
     properties: {
@@ -63,6 +56,12 @@ export const generateQuote = async (
     userPrompt: string
 ): Promise<AIQuoteResponse> => {
     try {
+        const apiKey = process.env.API_KEY;
+        if (!apiKey) {
+            throw new Error("API_KEY environment variable not set");
+        }
+        const ai = new GoogleGenAI({ apiKey });
+
         const fullPrompt = `
             As an expert furniture restorer and appraiser from 'Restorno', analyze the provided image of a piece of furniture.
             Based on the image and the user's request, provide a detailed restoration quote and market analysis.

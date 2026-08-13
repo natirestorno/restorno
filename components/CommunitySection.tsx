@@ -1,7 +1,7 @@
 
 import React from 'react';
 
-const CommunitySection: React.FC = () => {
+const CommunitySection: React.FC<{ onJoin: () => void }> = ({ onJoin }) => {
     return (
         <section className="py-20 bg-white">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -19,9 +19,9 @@ const CommunitySection: React.FC = () => {
                                 </li>
                             ))}
                         </ul>
-                        <a href="#" className="bg-gradient-to-r from-[#B8860B] to-[#DAA520] text-white font-bold py-3 px-6 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 text-lg inline-block">
+                        <button onClick={onJoin} className="bg-gradient-to-r from-[#B8860B] to-[#DAA520] text-white font-bold py-3 px-6 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 text-lg inline-block">
                             הצטרף חינם עכשיו
-                        </a>
+                        </button>
                     </div>
                     <div className="hidden lg:block">
                         <img src="https://picsum.photos/id/431/600/400" alt="Community gathering" className="rounded-xl shadow-2xl" />

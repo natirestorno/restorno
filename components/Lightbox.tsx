@@ -12,10 +12,10 @@ const Lightbox: React.FC<LightboxProps> = ({ isOpen, onClose, beforeImg, afterIm
     const [showAfter, setShowAfter] = useState(false);
 
     useEffect(() => {
-        // Reset to 'before' view when a new item is opened
-        if (isOpen) {
-            setShowAfter(false);
-        }
+        if (isOpen) setShowAfter(false);
+        const onKeyDown = (event: KeyboardEvent) => { if (event.key === 'Escape') onClose(); };
+        document.addEventListener('keydown', onKeyDown);
+        return () => document.removeEventListener('keydown', onKeyDown);
     }, [isOpen]);
 
     useEffect(() => {
